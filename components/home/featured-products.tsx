@@ -9,7 +9,7 @@ import { formatPrice } from "@/lib/utils";
 const products = [
   {
     id: 1,
-    name: "SoundWave Pro Headphones",
+    name: "BlackVault Pro Headphones",
     price: 299.99,
     rating: 4.8,
     reviewCount: 124,
@@ -47,7 +47,7 @@ const products = [
   },
   {
     id: 4,
-    name: "SoundWave Mini",
+    name: "BlackVault Mini",
     price: 149.99,
     rating: 4.7,
     reviewCount: 112,

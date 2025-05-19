@@ -10,7 +10,7 @@ const testimonials = [
     role: "Music Producer",
     image: "/images/testimonial-1.jpg", // Add actual images later
     quote:
-      "The sound quality of SoundWave headphones is exceptional. I use them every day in my studio and they never disappoint.",
+      "The sound quality of BlackVault headphones is exceptional. I use them every day in my studio and they never disappoint.",
     rating: 5,
   },
   {

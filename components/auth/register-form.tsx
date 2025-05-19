@@ -53,7 +53,7 @@ export default function RegisterForm() {
       <div className="text-center">
         <h2 className="text-3xl font-bold">Create Account</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Sign up to get started with SoundWave
+          Sign up to get started with BlackVault
         </p>
       </div>
 

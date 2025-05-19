@@ -2,8 +2,8 @@ import LoginForm from "@/components/auth/login-form";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Login | SoundWave",
-  description: "Log in to your SoundWave account",
+  title: "Login | BlackVault",
+  description: "Log in to your BlackVault account",
 };
 
 export default function LoginPage({

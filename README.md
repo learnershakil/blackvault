@@ -1,4 +1,4 @@
-# SoundWave E-commerce Platform
+# BlackVault E-commerce Platform
 
 A modern, full-stack e-commerce platform built with Next.js, TypeScript, Tailwind CSS, and PostgreSQL.
 

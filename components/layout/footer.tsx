@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">SoundWave</h3>
+            <h3 className="text-lg font-semibold">BlackVault</h3>
             <p className="text-muted-foreground">
               Premium audio products for the perfect listening experience.
             </p>
@@ -191,7 +191,7 @@ export default function Footer() {
         <div className="border-t border-border mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-muted-foreground text-sm">
-              © 2023 SoundWave. All rights reserved.
+              © 2025 BlackVault. All rights reserved.
             </p>
             <div className="flex space-x-4 mt-4 md:mt-0">
               <Link

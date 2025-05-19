@@ -2,8 +2,8 @@ import RegisterForm from "@/components/auth/register-form";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Register | SoundWave",
-  description: "Create a new account on SoundWave",
+  title: "Register | BlackVault",
+  description: "Create a new account on BlackVault",
 };
 
 export default function RegisterPage() {

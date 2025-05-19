@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SoundWave - Premium Audio Products",
+  title: "BlackVault - Premium Audio Products",
   description:
     "Shop the latest headphones, earbuds, and speakers with premium sound quality.",
 };

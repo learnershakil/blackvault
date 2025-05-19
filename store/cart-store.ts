@@ -2,80 +2,78 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export interface CartItem {
+  id: string;
   productId: string;
   name: string;
   price: number;
-  image: string;
   quantity: number;
+  image?: string;
   variantSku?: string;
 }
 
 interface CartStore {
   items: CartItem[];
-  addItem: (item: CartItem) => void;
-  removeItem: (productId: string, variantSku?: string) => void;
-  updateQuantity: (
-    productId: string,
-    quantity: number,
-    variantSku?: string
-  ) => void;
+  isOpen: boolean;
+  toggleCart: () => void;
+  addItem: (item: Omit<CartItem, "id">) => void;
+  removeItem: (id: string) => void;
+  updateItemQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   totalItems: () => number;
   totalPrice: () => number;
+  setCart: (items: CartItem[]) => void;
+  initializeCart: () => Promise<void>;
 }
 
 const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      isOpen: false,
+
+      toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
 
       addItem: (item) => {
-        set((state) => {
-          // Check if item already exists in cart
-          const existingItemIndex = state.items.findIndex(
-            (i) =>
-              i.productId === item.productId && i.variantSku === item.variantSku
-          );
+        const { items } = get();
+        const existingItem = items.find(
+          (i) =>
+            i.productId === item.productId && i.variantSku === item.variantSku
+        );
 
-          if (existingItemIndex >= 0) {
-            // Update quantity if item exists
-            const updatedItems = [...state.items];
-            updatedItems[existingItemIndex] = {
-              ...updatedItems[existingItemIndex],
-              quantity:
-                updatedItems[existingItemIndex].quantity + item.quantity,
-            };
-            return { items: updatedItems };
-          } else {
-            // Add new item
-            return { items: [...state.items, item] };
-          }
-        });
+        if (existingItem) {
+          // Update quantity of existing item
+          const updatedItems = items.map((i) =>
+            i.id === existingItem.id
+              ? { ...i, quantity: i.quantity + item.quantity }
+              : i
+          );
+          set({ items: updatedItems });
+        } else {
+          // Add new item with generated ID
+          const newItem = {
+            ...item,
+            id: Date.now().toString(),
+          };
+          set({ items: [...items, newItem] });
+        }
       },
 
-      removeItem: (productId, variantSku) => {
+      removeItem: (id) =>
         set((state) => ({
-          items: state.items.filter(
-            (item) =>
-              !(item.productId === productId && item.variantSku === variantSku)
+          items: state.items.filter((i) => i.id !== id),
+        })),
+
+      updateItemQuantity: (id, quantity) => {
+        if (quantity <= 0) {
+          get().removeItem(id);
+          return;
+        }
+
+        set((state) => ({
+          items: state.items.map((item) =>
+            item.id === id ? { ...item, quantity } : item
           ),
         }));
-      },
-
-      updateQuantity: (productId, quantity, variantSku) => {
-        set((state) => {
-          const updatedItems = state.items.map((item) => {
-            if (
-              item.productId === productId &&
-              item.variantSku === variantSku
-            ) {
-              return { ...item, quantity };
-            }
-            return item;
-          });
-
-          return { items: updatedItems };
-        });
       },
 
       clearCart: () => set({ items: [] }),
@@ -90,9 +88,26 @@ const useCartStore = create<CartStore>()(
           0
         );
       },
+
+      setCart: (items) => set({ items }),
+
+      // Initialize cart - would typically sync with server for logged in users
+      initializeCart: async () => {
+        try {
+          // Example: If user is logged in, fetch their cart from API
+          // const response = await fetch('/api/cart');
+          // if (response.ok) {
+          //   const data = await response.json();
+          //   get().setCart(data.items);
+          // }
+        } catch (error) {
+          console.error("Failed to initialize cart:", error);
+        }
+      },
     }),
     {
-      name: "blackvault-cart",
+      name: "cart-storage", // unique name for localStorage
+      skipHydration: true, // handle hydration manually in the CartProvider
     }
   )
 );

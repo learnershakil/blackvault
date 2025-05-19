@@ -1,220 +1,210 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { useState } from "react";
 
 export default function Footer() {
+  const [emailInput, setEmailInput] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleSubscribeSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // In a real app you'd send this data to an API
+    setIsSubmitted(true);
+    setEmailInput("");
+    // Reset after 5 seconds
+    setTimeout(() => setIsSubmitted(false), 5000);
+  };
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
-    <footer className="bg-muted dark:bg-muted pt-12 pb-8">
+    <footer className="bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 pt-16 pb-8">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">BlackVault</h3>
-            <p className="text-muted-foreground">
-              Premium audio products for the perfect listening experience.
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          {/* Column 1: Company Info */}
+          <motion.div variants={itemVariants}>
+            <h3 className="text-lg font-semibold mb-4">BlackVault</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              Premium audio equipment for ultimate listening experiences.
             </p>
             <div className="flex space-x-4">
-              <a
-                href="#"
-                className="text-muted-foreground hover:text-primary-600"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-5 w-5"
+              {/* Social media icons */}
+              {["facebook", "twitter", "instagram", "youtube"].map((social) => (
+                <motion.a
+                  key={social}
+                  href={`https://${social}.com`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.9 }}
                 >
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                </svg>
-              </a>
-              <a
-                href="#"
-                className="text-muted-foreground hover:text-primary-600"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-5 w-5"
-                >
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                </svg>
-              </a>
-              <a
-                href="#"
-                className="text-muted-foreground hover:text-primary-600"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-5 w-5"
-                >
-                  <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
-                </svg>
-              </a>
+                  <span className="sr-only">{social}</span>
+                  <div className="w-6 h-6 flex items-center justify-center">
+                    {/* Placeholder for social icons */}
+                    <div className="w-6 h-6 rounded-full bg-current" />
+                  </div>
+                </motion.a>
+              ))}
             </div>
-          </div>
+          </motion.div>
 
-          <div>
+          {/* Column 2: Shop Links */}
+          <motion.div variants={itemVariants}>
             <h3 className="text-lg font-semibold mb-4">Shop</h3>
             <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/products/headphones"
-                  className="text-muted-foreground hover:text-primary-600 transition-colors"
+              {[
+                { href: "/products", label: "All Products" },
+                { href: "/products/category/headphones", label: "Headphones" },
+                { href: "/products/category/earbuds", label: "Earbuds" },
+                { href: "/products/category/speakers", label: "Speakers" },
+                {
+                  href: "/products/category/accessories",
+                  label: "Accessories",
+                },
+              ].map((link) => (
+                <motion.li
+                  key={link.href}
+                  whileHover={{ x: 5 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  Headphones
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products/earbuds"
-                  className="text-muted-foreground hover:text-primary-600 transition-colors"
-                >
-                  Earbuds
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products/speakers"
-                  className="text-muted-foreground hover:text-primary-600 transition-colors"
-                >
-                  Speakers
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/products/accessories"
-                  className="text-muted-foreground hover:text-primary-600 transition-colors"
-                >
-                  Accessories
-                </Link>
-              </li>
+                  <Link
+                    href={link.href}
+                    className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </motion.li>
+              ))}
             </ul>
-          </div>
+          </motion.div>
 
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Company</h3>
+          {/* Column 3: Customer Service */}
+          <motion.div variants={itemVariants}>
+            <h3 className="text-lg font-semibold mb-4">Customer Service</h3>
             <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/about"
-                  className="text-muted-foreground hover:text-primary-600 transition-colors"
+              {[
+                { href: "/contact", label: "Contact Us" },
+                { href: "/faq", label: "FAQs" },
+                { href: "/returns", label: "Returns & Exchanges" },
+                { href: "/shipping", label: "Shipping Policy" },
+                { href: "/warranty", label: "Warranty Information" },
+              ].map((link) => (
+                <motion.li
+                  key={link.href}
+                  whileHover={{ x: 5 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/contact"
-                  className="text-muted-foreground hover:text-primary-600 transition-colors"
-                >
-                  Contact
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/careers"
-                  className="text-muted-foreground hover:text-primary-600 transition-colors"
-                >
-                  Careers
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/press"
-                  className="text-muted-foreground hover:text-primary-600 transition-colors"
-                >
-                  Press
-                </Link>
-              </li>
+                  <Link
+                    href={link.href}
+                    className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </motion.li>
+              ))}
             </ul>
-          </div>
+          </motion.div>
 
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Support</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/help"
-                  className="text-muted-foreground hover:text-primary-600 transition-colors"
-                >
-                  Help Center
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/shipping"
-                  className="text-muted-foreground hover:text-primary-600 transition-colors"
-                >
-                  Shipping Info
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/returns"
-                  className="text-muted-foreground hover:text-primary-600 transition-colors"
-                >
-                  Returns & Exchanges
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/warranty"
-                  className="text-muted-foreground hover:text-primary-600 transition-colors"
-                >
-                  Warranty
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="border-t border-border mt-8 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-muted-foreground text-sm">
-              © 2025 BlackVault. All rights reserved.
+          {/* Column 4: Newsletter */}
+          <motion.div variants={itemVariants}>
+            <h3 className="text-lg font-semibold mb-4">Stay Updated</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              Subscribe to our newsletter for the latest products and deals.
             </p>
-            <div className="flex space-x-4 mt-4 md:mt-0">
+            <form onSubmit={handleSubscribeSubmit} className="space-y-2">
+              <div className="relative">
+                <input
+                  type="email"
+                  placeholder="Your email address"
+                  value={emailInput}
+                  onChange={(e) => setEmailInput(e.target.value)}
+                  required
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-600"
+                />
+              </div>
+
+              <motion.button
+                type="submit"
+                className="w-full py-2 px-4 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Subscribe
+              </motion.button>
+
+              {isSubmitted && (
+                <motion.p
+                  className="text-green-600 dark:text-green-400 text-sm mt-2"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  Thank you for subscribing!
+                </motion.p>
+              )}
+            </form>
+          </motion.div>
+        </motion.div>
+
+        {/* Bottom section */}
+        <motion.div
+          className="border-t border-gray-200 dark:border-gray-800 pt-8 mt-8 text-sm text-gray-500 dark:text-gray-400"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          viewport={{ once: true }}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p>
+                &copy; {new Date().getFullYear()} BlackVault Audio. All rights
+                reserved.
+              </p>
+            </div>
+            <div className="flex space-x-4 md:justify-end">
               <Link
                 href="/privacy"
-                className="text-muted-foreground text-sm hover:text-primary-600 transition-colors"
+                className="hover:text-primary-600 dark:hover:text-primary-400"
               >
                 Privacy Policy
               </Link>
               <Link
                 href="/terms"
-                className="text-muted-foreground text-sm hover:text-primary-600 transition-colors"
+                className="hover:text-primary-600 dark:hover:text-primary-400"
               >
                 Terms of Service
               </Link>
               <Link
                 href="/cookies"
-                className="text-muted-foreground text-sm hover:text-primary-600 transition-colors"
+                className="hover:text-primary-600 dark:hover:text-primary-400"
               >
                 Cookie Policy
               </Link>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </footer>
   );

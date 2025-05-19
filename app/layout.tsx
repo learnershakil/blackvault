@@ -1,50 +1,49 @@
-import { ReactNode } from "react";
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "@/lib/styles.css";
+
+import type { Metadata } from "next";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
+import { auth } from "@/lib/auth";
+
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
-import CartDrawer from "@/components/cart/cart-drawer";
-import { NextAuthProvider } from "@/providers/next-auth-provider";
-
-// Add fallback fonts in case Google Fonts fail to load
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  fallback: ["system-ui", "arial"],
-  display: "swap",
-  weight: ["400", "500", "600", "700"], // Add specific weights if needed
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  fallback: ["monospace"],
-  display: "swap",
-});
+import CartProvider from "@/components/cart/cart-provider";
+import PageTransition from "@/components/transitions/page-transition";
+import { ToastProvider } from "@/components/ui/toast";
 
 export const metadata: Metadata = {
-  title: "BlackVault - Premium Audio Products",
-  description:
-    "Shop the latest headphones, earbuds, and speakers with premium sound quality.",
+  title: "BlackVault - Premium Audio Equipment",
+  description: "Shop the best headphones, earbuds, and speakers at BlackVault.",
 };
 
-export default function RootLayout({
+// Fix the viewport metadata warning by moving it to a separate export
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
+export default async function RootLayout({
   children,
-}: Readonly<{
-  children: ReactNode;
-}>) {
+}: {
+  children: React.ReactNode;
+}) {
+  const session = await auth();
+
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100`}
+        className={`${GeistSans.variable} ${GeistMono.variable} font-sans min-h-screen flex flex-col`}
       >
-        <NextAuthProvider>
-          <Header />
-          <main className="flex-grow">{children}</main>
-          <Footer />
-          <CartDrawer />
-        </NextAuthProvider>
+        <CartProvider>
+          <ToastProvider>
+            <Header session={session} />
+            <main className="flex-1">
+              <PageTransition>{children}</PageTransition>
+            </main>
+            <Footer />
+          </ToastProvider>
+        </CartProvider>
       </body>
     </html>
   );

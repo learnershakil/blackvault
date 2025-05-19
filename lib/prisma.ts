@@ -1,12 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 
-// Create a singleton Prisma client instance
-const globalForPrisma = global as unknown as {
-  prisma: PrismaClient | undefined;
-};
+// Use a singleton pattern to avoid multiple instances in development
+const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 const prisma =
-  globalForPrisma.prisma ??
+  globalForPrisma.prisma ||
   new PrismaClient({
     log:
       process.env.NODE_ENV === "development"

@@ -2,30 +2,69 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
 // GET handler for listing all categories
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const topLevel = searchParams.get("topLevel") === "true";
+    const limit = parseInt(searchParams.get("limit") || "0");
+
+    // Build query based on parameters
+    const query: any = {};
+
+    if (topLevel) {
+      query.parentId = null; // Only top-level categories
+    }
+
+    // Include product count for each category
     const categories = await prisma.category.findMany({
+      where: query,
       include: {
-        _count: {
-          select: { products: true },
-        },
-        children: {
+        products: {
           select: {
             id: true,
-            name: true,
-            slug: true,
-            _count: {
-              select: { products: true },
+          },
+        },
+        children: {
+          include: {
+            products: {
+              select: {
+                id: true,
+              },
             },
           },
         },
       },
-      where: {
-        parentId: null, // Get only top-level categories
+      orderBy: {
+        name: "asc",
       },
+      ...(limit > 0 ? { take: limit } : {}),
     });
 
-    return NextResponse.json(categories);
+    // Transform data to include product counts and format the response
+    const formattedCategories = categories.map((category) => ({
+      id: category.id,
+      name: category.name,
+      description: category.description,
+      slug: category.slug,
+      parentId: category.parentId,
+      image: category.image,
+      _count: {
+        products: category.products.length,
+      },
+      children: category.children.map((child) => ({
+        id: child.id,
+        name: child.name,
+        description: child.description,
+        slug: child.slug,
+        parentId: child.parentId,
+        image: child.image,
+        _count: {
+          products: child.products.length,
+        },
+      })),
+    }));
+
+    return NextResponse.json(formattedCategories);
   } catch (error) {
     console.error("Error fetching categories:", error);
     return NextResponse.json(

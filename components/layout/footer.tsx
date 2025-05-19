@@ -34,10 +34,10 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-gray-100 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 pt-16 pb-8">
-      <div className="container mx-auto px-4">
+    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+      <div className="container mx-auto px-4 py-12">
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12"
+          className="grid grid-cols-1 md:grid-cols-4 gap-8"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -45,9 +45,12 @@ export default function Footer() {
         >
           {/* Column 1: Company Info */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-lg font-semibold mb-4">BlackVault</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              BlackVault
+            </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Premium audio equipment for ultimate listening experiences.
+              Premium audio equipment for the true audiophile. Experience sound
+              like never before.
             </p>
             <div className="flex space-x-4">
               {/* Social media icons */}
@@ -57,7 +60,7 @@ export default function Footer() {
                   href={`https://${social}.com`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                  className="text-gray-400 hover:text-primary-600 dark:hover:text-primary-500 transition-colors"
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}
                 >
@@ -73,7 +76,9 @@ export default function Footer() {
 
           {/* Column 2: Shop Links */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-lg font-semibold mb-4">Shop</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Quick Links
+            </h3>
             <ul className="space-y-2">
               {[
                 { href: "/products", label: "All Products" },
@@ -92,7 +97,7 @@ export default function Footer() {
                 >
                   <Link
                     href={link.href}
-                    className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                    className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-500 transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -103,7 +108,9 @@ export default function Footer() {
 
           {/* Column 3: Customer Service */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-lg font-semibold mb-4">Customer Service</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Customer Service
+            </h3>
             <ul className="space-y-2">
               {[
                 { href: "/contact", label: "Contact Us" },
@@ -119,7 +126,7 @@ export default function Footer() {
                 >
                   <Link
                     href={link.href}
-                    className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                    className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-500 transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -130,25 +137,25 @@ export default function Footer() {
 
           {/* Column 4: Newsletter */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-lg font-semibold mb-4">Stay Updated</h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              Stay Updated
+            </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Subscribe to our newsletter for the latest products and deals.
+              Subscribe to our newsletter for the latest products, offers, and
+              audio tips.
             </p>
-            <form onSubmit={handleSubscribeSubmit} className="space-y-2">
-              <div className="relative">
-                <input
-                  type="email"
-                  placeholder="Your email address"
-                  value={emailInput}
-                  onChange={(e) => setEmailInput(e.target.value)}
-                  required
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-600"
-                />
-              </div>
-
+            <form onSubmit={handleSubscribeSubmit} className="flex">
+              <input
+                type="email"
+                placeholder="Your email"
+                value={emailInput}
+                onChange={(e) => setEmailInput(e.target.value)}
+                required
+                className="px-4 py-2 w-full border border-gray-300 dark:border-gray-700 rounded-l focus:outline-none focus:ring-2 focus:ring-primary-600 dark:bg-gray-800 dark:text-white"
+              />
               <motion.button
                 type="submit"
-                className="w-full py-2 px-4 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-r"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -170,35 +177,33 @@ export default function Footer() {
 
         {/* Bottom section */}
         <motion.div
-          className="border-t border-gray-200 dark:border-gray-800 pt-8 mt-8 text-sm text-gray-500 dark:text-gray-400"
+          className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
           viewport={{ once: true }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <p>
-                &copy; {new Date().getFullYear()} BlackVault Audio. All rights
-                reserved.
-              </p>
-            </div>
-            <div className="flex space-x-4 md:justify-end">
-              <Link
-                href="/privacy"
-                className="hover:text-primary-600 dark:hover:text-primary-400"
-              >
-                Privacy Policy
-              </Link>
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              &copy; {new Date().getFullYear()} BlackVault Audio. All rights
+              reserved.
+            </p>
+            <div className="flex space-x-6 mt-4 md:mt-0">
               <Link
                 href="/terms"
-                className="hover:text-primary-600 dark:hover:text-primary-400"
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-500"
               >
                 Terms of Service
               </Link>
               <Link
+                href="/privacy"
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-500"
+              >
+                Privacy Policy
+              </Link>
+              <Link
                 href="/cookies"
-                className="hover:text-primary-600 dark:hover:text-primary-400"
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-500"
               >
                 Cookie Policy
               </Link>

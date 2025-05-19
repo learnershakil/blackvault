@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   // Enable React strict mode for development
@@ -23,13 +22,8 @@ const nextConfig: NextConfig = {
   // Configure compression
   compress: true,
 
-  // Enable response compression
-  experimental: {
-    // Enable next.js gzip compression
-    optimizeCss: true,
-    // Enable browser React optimization
-    optimizeServerReact: true,
-  },
+  // Optimize API endpoints to be compiled as Edge Functions where possible
+  serverExternalPackages: ["@prisma/client"], // Fixed from serverComponentsExternalPackages
 
   // Configure Content Security Policy
   headers: async () => {
@@ -54,11 +48,11 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Optimize API endpoints to be compiled as Edge Functions where possible
+  // Updated experimental options
   experimental: {
-    serverComponentsExternalPackages: ["@prisma/client"],
+    // Enable next.js gzip compression
+    optimizeCss: true,
   },
 };
 
-// Export the config with any needed wrappers
 export default nextConfig;

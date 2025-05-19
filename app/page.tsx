@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import Link from "next/link";
 
 // Use dynamic imports with loading fallbacks for better performance
 const HeroBanner = dynamic(() => import("@/components/home/hero-banner"), {
@@ -93,6 +94,33 @@ export default function Home() {
 
       {/* Newsletter Sign-up Section */}
       <NewsletterSection />
+
+      {/* Welcome Section */}
+      <div className="container mx-auto px-4 py-12">
+        <section className="text-center">
+          <h1 className="text-4xl font-bold mb-6">
+            Welcome to BlackVault Audio
+          </h1>
+          <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
+            Premium quality audio equipment for true audiophiles. Discover our
+            collection of headphones, speakers, and accessories.
+          </p>
+          <div className="flex justify-center gap-4">
+            <Link
+              href="/products"
+              className="px-6 py-3 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition-colors"
+            >
+              Shop Now
+            </Link>
+            <Link
+              href="/about"
+              className="px-6 py-3 bg-gray-200 dark:bg-gray-800 rounded-md hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+            >
+              Learn More
+            </Link>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

@@ -1,107 +1,92 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { SearchIcon } from "@/components/icons/search-icon";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface SearchBarProps {
-  placeholder?: string;
-  className?: string;
   expanded?: boolean;
+  className?: string;
 }
 
 export default function SearchBar({
-  placeholder = "Search products...",
-  className = "",
   expanded = false,
+  className = "",
 }: SearchBarProps) {
-  const [query, setQuery] = useState("");
   const [isExpanded, setIsExpanded] = useState(expanded);
+  const [query, setQuery] = useState("");
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Handle search submission
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!query.trim()) {
-      return;
-    }
-
-    router.push(`/search?q=${encodeURIComponent(query.trim())}`);
-  };
-
-  // Toggle search input visibility
-  const toggleExpanded = () => {
-    if (!expanded) {
-      setIsExpanded(!isExpanded);
-
-      // Focus input when expanded
-      if (!isExpanded && inputRef.current) {
-        setTimeout(() => {
-          inputRef.current?.focus();
-        }, 100);
-      }
+    if (query.trim()) {
+      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
     }
   };
 
-  // Close search on outside click
   useEffect(() => {
-    if (!expanded && isExpanded) {
-      const handleOutsideClick = (e: MouseEvent) => {
-        if (inputRef.current && !inputRef.current.contains(e.target as Node)) {
-          setIsExpanded(false);
-        }
-      };
-
-      document.addEventListener("click", handleOutsideClick);
-      return () => document.removeEventListener("click", handleOutsideClick);
+    if (isExpanded && inputRef.current) {
+      inputRef.current.focus();
     }
-  }, [isExpanded, expanded]);
+  }, [isExpanded]);
 
   return (
     <div className={`relative ${className}`}>
-      <form onSubmit={handleSearch} className="flex items-center">
-        <button
+      <motion.form
+        onSubmit={handleSubmit}
+        className={`relative flex items-center ${
+          isExpanded ? "w-full sm:w-64" : "w-10"
+        }`}
+      >
+        <motion.button
           type="button"
-          onClick={toggleExpanded}
-          className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full ${
-            isExpanded ? "text-primary-600" : ""
+          onClick={() => !isExpanded && setIsExpanded(true)}
+          className={`absolute left-0 top-0 flex items-center justify-center h-10 w-10 p-2 rounded-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 ${
+            isExpanded ? "pointer-events-none" : ""
           }`}
-          aria-label="Search"
+          whileHover={!isExpanded ? { scale: 1.1 } : {}}
+          whileTap={!isExpanded ? { scale: 0.9 } : {}}
         >
-          <SearchIcon className="w-5 h-5" />
-        </button>
-        <div
-          className={`
-            overflow-hidden transition-all duration-300 
-            ${expanded ? "w-auto" : isExpanded ? "w-48 md:w-60" : "w-0"}
-          `}
-        >
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder={placeholder}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className={`
-              w-full py-1 px-2 text-sm border-b-2 border-gray-200 dark:border-gray-700
-              focus:border-primary-600 dark:focus:border-primary-600
-              bg-transparent outline-none
-            `}
-          />
-        </div>
-        <button
-          type="submit"
-          className={`
-            ${isExpanded || expanded ? "block" : "hidden"}
-            ml-1 px-2 py-1 text-xs rounded
-            text-primary-600 hover:text-primary-700 dark:text-primary-400
-          `}
-        >
-          Search
-        </button>
-      </form>
+          <svg
+            className={`w-5 h-5 ${
+            !isExpanded ? "mb-8" : "mt-4"
+          }`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </motion.button>
+
+        <AnimatePresence>
+          {isExpanded && (
+            <motion.input
+              ref={inputRef}
+              type="text"
+              placeholder="Search products..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="pl-10 mt-2 pr-4 py-2 w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-full border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: "100%", opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onBlur={() => {
+                if (query.trim() === "" && !expanded) {
+                  setIsExpanded(false);
+                }
+              }}
+            />
+          )}
+        </AnimatePresence>
+      </motion.form>
     </div>
   );
 }

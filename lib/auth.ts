@@ -25,68 +25,86 @@ export const getUserRole = (session: Session | null) => {
 // auth.ts configuration
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import prisma from "./prisma";
-import Credentials from "next-auth/providers/credentials";
-import { compare } from "bcryptjs";
-import { UserRole } from "@prisma/client";
+import prisma from "@/lib/prisma";
+import { z } from "zod";
+import bcrypt from "bcryptjs";
+import CredentialsProvider from "next-auth/providers/credentials";
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+
+export const { auth, signIn, signOut } = NextAuth({
+  // Adapter to store sessions and users in the database
   adapter: PrismaAdapter(prisma),
-  session: { strategy: "jwt" },
+
+  session: {
+    strategy: "jwt",
+  },
+
   pages: {
     signIn: "/login",
+    error: "/login",
   },
+
   providers: [
-    Credentials({
-      name: "credentials",
+    CredentialsProvider({
+      name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        // Input validation
+        const result = loginSchema.safeParse(credentials);
+
+        if (!result.success) {
           return null;
         }
 
+        const { email, password } = result.data;
+
+        // Find user by email
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+          where: { email },
         });
 
         if (!user || !user.password) {
           return null;
         }
 
-        const isPasswordValid = await compare(
-          credentials.password,
-          user.password
-        );
+        // Check password
+        const passwordMatch = await bcrypt.compare(password, user.password);
 
-        if (!isPasswordValid) {
+        if (!passwordMatch) {
           return null;
         }
 
+        // Return user without password
         return {
           id: user.id,
-          name: user.name,
           email: user.email,
-          role: user.role,
+          name: user.name,
           image: user.image,
+          role: user.role,
         };
       },
     }),
   ],
+
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = user.role as UserRole;
         token.id = user.id;
+        token.role = user.role;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token && session.user) {
-        session.user.role = token.role as UserRole;
+      if (session.user) {
         session.user.id = token.id as string;
+        session.user.role = token.role as string;
       }
       return session;
     },

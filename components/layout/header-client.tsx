@@ -100,6 +100,7 @@ export default function HeaderClient({ session }: HeaderClientProps) {
         {/* Right side actions */}
         <div className="flex items-center space-x-4">
           {/* Search bar */}
+          
           <SearchBar />
 
           {/* Cart button */}

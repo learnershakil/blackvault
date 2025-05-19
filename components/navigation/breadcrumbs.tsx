@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { HomeIcon } from "@/components/icons/home-icon";
 import { ChevronRightIcon } from "@/components/icons/chevron-right-icon";
+import { BreadcrumbStructuredData } from "@/components/seo/structured-data";
 
 interface BreadcrumbItem {
   href: string;
@@ -28,37 +29,49 @@ export default function Breadcrumbs({
   // If items are provided directly, use those
   if (items) {
     return (
-      <nav aria-label="Breadcrumb" className="py-3 text-sm">
-        <ol className="flex items-center flex-wrap">
-          <li className="flex items-center">
-            <Link
-              href="/"
-              className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 flex items-center"
-            >
-              <HomeIcon className="w-4 h-4 mr-2" />
-              <span className="sr-only md:not-sr-only">{homeLabel}</span>
-            </Link>
-          </li>
+      <>
+        {/* Include structured data for breadcrumbs */}
+        <BreadcrumbStructuredData
+          items={items.map((item) => ({
+            name: item.label,
+            url: item.href,
+          }))}
+        />
 
-          {items.map((item, index) => (
-            <li key={item.href} className="flex items-center">
-              <ChevronRightIcon className="w-5 h-5 mx-2 text-gray-400" />
-              {index === items.length - 1 ? (
-                <span className="font-medium text-gray-800 dark:text-gray-200 truncate">
-                  {item.label}
-                </span>
-              ) : (
-                <Link
-                  href={item.href}
-                  className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 truncate"
-                >
-                  {item.label}
-                </Link>
-              )}
-            </li>
-          ))}
-        </ol>
-      </nav>
+        <nav aria-label="Breadcrumb" className="py-3">
+          <ol className="flex flex-wrap items-center space-x-1 text-sm">
+            {items.map((item, index) => {
+              const isLastItem = index === items.length - 1;
+
+              return (
+                <li key={item.href} className="flex items-center">
+                  {index > 0 && (
+                    <span className="mx-1 text-gray-400" aria-hidden="true">
+                      /
+                    </span>
+                  )}
+
+                  {isLastItem ? (
+                    <span
+                      className="font-medium text-gray-800 dark:text-gray-300"
+                      aria-current="page"
+                    >
+                      {item.label}
+                    </span>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        </nav>
+      </>
     );
   }
 
@@ -90,36 +103,48 @@ export default function Breadcrumbs({
   });
 
   return (
-    <nav aria-label="Breadcrumb" className="py-3 text-sm">
-      <ol className="flex items-center flex-wrap">
-        <li className="flex items-center">
-          <Link
-            href="/"
-            className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 flex items-center"
-          >
-            <HomeIcon className="w-4 h-4 mr-2" />
-            <span className="sr-only md:not-sr-only">{homeLabel}</span>
-          </Link>
-        </li>
+    <>
+      {/* Include structured data for breadcrumbs */}
+      <BreadcrumbStructuredData
+        items={breadcrumbItems.map((item) => ({
+          name: item.label,
+          url: item.href,
+        }))}
+      />
 
-        {breadcrumbItems.map((item, index) => (
-          <li key={item.href} className="flex items-center">
-            <ChevronRightIcon className="w-5 h-5 mx-2 text-gray-400" />
-            {index === breadcrumbItems.length - 1 ? (
-              <span className="font-medium text-gray-800 dark:text-gray-200 truncate">
-                {item.label}
-              </span>
-            ) : (
-              <Link
-                href={item.href}
-                className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 truncate"
-              >
-                {item.label}
-              </Link>
-            )}
-          </li>
-        ))}
-      </ol>
-    </nav>
+      <nav aria-label="Breadcrumb" className="py-3">
+        <ol className="flex flex-wrap items-center space-x-1 text-sm">
+          {breadcrumbItems.map((item, index) => {
+            const isLastItem = index === breadcrumbItems.length - 1;
+
+            return (
+              <li key={item.href} className="flex items-center">
+                {index > 0 && (
+                  <span className="mx-1 text-gray-400" aria-hidden="true">
+                    /
+                  </span>
+                )}
+
+                {isLastItem ? (
+                  <span
+                    className="font-medium text-gray-800 dark:text-gray-300"
+                    aria-current="page"
+                  >
+                    {item.label}
+                  </span>
+                ) : (
+                  <Link
+                    href={item.href}
+                    className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
+                  >
+                    {item.label}
+                  </Link>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      </nav>
+    </>
   );
 }

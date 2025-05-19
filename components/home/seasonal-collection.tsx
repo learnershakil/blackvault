@@ -18,7 +18,7 @@ interface SeasonalCollectionProps {
 }
 
 export default function SeasonalCollection({
-  title = "Summer Collection 2023",
+  title = "Summer Collection 2025",
   subtitle = "Limited Edition",
   description = "Our new summer collection is here! Discover the perfect audio companions for your beach days and outdoor adventures.",
   imageUrl = "/images/seasonal/summer-collection.jpg",

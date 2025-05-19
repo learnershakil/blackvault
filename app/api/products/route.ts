@@ -1,34 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { z } from "zod";
-
-// Query parameters schema for filtering and pagination
-const querySchema = z.object({
-  search: z.string().optional(),
-  category: z.string().optional(),
-  minPrice: z.coerce.number().optional(),
-  maxPrice: z.coerce.number().optional(),
-  sort: z.enum(["price_asc", "price_desc", "newest", "popular"]).optional(),
-  page: z.coerce.number().optional().default(1),
-  limit: z.coerce.number().optional().default(10),
-});
+import {
+  parsePaginationParams,
+  createPaginatedResponse,
+  optimizedResponse,
+} from "@/lib/api-utils";
 
 // GET handler for listing products with filtering and pagination
 export async function GET(request: NextRequest) {
   try {
-    const url = new URL(request.url);
-    const raw = Object.fromEntries(url.searchParams.entries());
-    const validatedQuery = querySchema.parse(raw);
+    // Parse query parameters
+    const { searchParams } = new URL(request.url);
+    const { page, limit } = parsePaginationParams(request);
 
-    const { search, category, minPrice, maxPrice, sort, page, limit } =
-      validatedQuery;
+    // Get field selectors
+    const fields = searchParams.get("fields")?.split(",") || [];
 
-    // Base query conditions
+    // Build query filters
+    const categorySlug = searchParams.get("category");
+    const search = searchParams.get("search");
+    const sort = searchParams.get("sort") || "createdAt";
+    const order = searchParams.get("order") || "desc";
+
+    // Build where condition
     const where: any = {
       isPublished: true,
     };
 
-    // Search functionality
+    if (categorySlug) {
+      where.category = {
+        slug: categorySlug,
+      };
+    }
+
     if (search) {
       where.OR = [
         { name: { contains: search, mode: "insensitive" } },
@@ -36,39 +40,17 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    // Category filter
-    if (category) {
-      where.category = {
-        slug: category,
-      };
-    }
-
-    // Price range filters
-    if (minPrice !== undefined) {
-      where.price = {
-        ...where.price,
-        gte: minPrice,
-      };
-    }
-
-    if (maxPrice !== undefined) {
-      where.price = {
-        ...where.price,
-        lte: maxPrice,
-      };
-    }
-
-    // Determine sort order
-    let orderBy: any = { createdAt: "desc" };
-    if (sort === "price_asc") orderBy = { price: "asc" };
-    if (sort === "price_desc") orderBy = { price: "desc" };
-    if (sort === "newest") orderBy = { createdAt: "desc" };
-    if (sort === "popular") orderBy = { reviews: { _count: "desc" } };
-
-    // Calculate pagination
+    // Calculate skip for pagination
     const skip = (page - 1) * limit;
 
-    // Execute query with relations
+    // Build orderBy condition
+    const orderBy: any = {};
+    orderBy[sort] = order.toLowerCase();
+
+    // Get total count for pagination
+    const total = await prisma.product.count({ where });
+
+    // Get products with pagination
     const products = await prisma.product.findMany({
       where,
       orderBy,
@@ -76,35 +58,35 @@ export async function GET(request: NextRequest) {
       take: limit,
       include: {
         category: {
-          select: { id: true, name: true, slug: true },
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
         },
         images: {
-          where: { isDefault: true },
+          where: {
+            OR: [{ isDefault: true }, { id: { equals: undefined } }],
+          },
           take: 1,
-        },
-        _count: {
-          select: { reviews: true },
+          orderBy: {
+            isDefault: "desc",
+          },
         },
       },
     });
 
-    // Get total count for pagination
-    const total = await prisma.product.count({ where });
+    // Create paginated response
+    const response = createPaginatedResponse(products, total, { page, limit });
 
-    return NextResponse.json({
-      products,
-      pagination: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
-    });
+    // Return optimized response with caching
+    return optimizedResponse(response, "MEDIUM");
   } catch (error) {
     console.error("Error fetching products:", error);
-    return NextResponse.json(
+    return optimizedResponse(
       { error: "Failed to fetch products" },
-      { status: 500 }
+      "SHORT",
+      500
     );
   }
 }

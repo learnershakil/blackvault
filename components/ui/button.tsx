@@ -1,9 +1,9 @@
-import { ButtonHTMLAttributes, ReactNode } from "react";
+import { ButtonHTMLAttributes, ReactNode, forwardRef } from "react";
 import { VariantProps, cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed",
+  "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed",
   {
     variants: {
       variant: {
@@ -33,23 +33,51 @@ export interface ButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   children: ReactNode;
+  asChild?: boolean;
 }
 
-const Button = ({
-  className,
-  variant,
-  size,
-  children,
-  ...props
-}: ButtonProps) => {
-  return (
-    <button
-      className={cn(buttonVariants({ variant, size }), className)}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-};
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      className,
+      variant,
+      size,
+      children,
+      disabled,
+      type = "button",
+      asChild = false,
+      ...props
+    },
+    ref
+  ) => {
+    if (asChild) {
+      // When used as a child, we'll let the parent handle rendering
+      // but still provide the appropriate className
+      return (
+        <div
+          className={cn(buttonVariants({ variant, size }), className)}
+          role="none"
+        >
+          {children}
+        </div>
+      );
+    }
+
+    return (
+      <button
+        className={cn(buttonVariants({ variant, size }), className)}
+        ref={ref}
+        disabled={disabled}
+        type={type}
+        {...props}
+        aria-disabled={disabled}
+      >
+        {children}
+      </button>
+    );
+  }
+);
+
+Button.displayName = "Button";
 
 export { Button, buttonVariants };

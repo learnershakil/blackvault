@@ -8,6 +8,7 @@ import CartButton from "@/components/layout/cart-button";
 import SearchBar from "@/components/search/search-bar";
 import { Button } from "@/components/ui/button";
 import { Session } from "next-auth";
+import { usePathname } from "next/navigation";
 
 interface HeaderClientProps {
   session: Session | null;
@@ -17,6 +18,11 @@ export default function HeaderClient({ session }: HeaderClientProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const user = session?.user;
+  const isAdmin = user?.role === "ADMIN";
 
   // Track scroll position to add shadow on scroll
   useEffect(() => {
@@ -100,7 +106,6 @@ export default function HeaderClient({ session }: HeaderClientProps) {
         {/* Right side actions */}
         <div className="flex items-center space-x-4">
           {/* Search bar */}
-          
           <SearchBar />
 
           {/* Cart button */}
@@ -108,17 +113,57 @@ export default function HeaderClient({ session }: HeaderClientProps) {
 
           {/* User menu or login button */}
           {session ? (
-            <Link href="/profile" className="relative">
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="h-8 w-8 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400 hover:opacity-80 transition-opacity"
+            <div className="relative group">
+              <button
+                className="flex items-center space-x-1 text-sm font-medium text-gray-900 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
-                {session.user?.name?.charAt(0) ||
-                  session.user?.email?.charAt(0) ||
-                  "U"}
-              </motion.div>
-            </Link>
+                <span>Hi, {user.name?.split(" ")[0] || "User"}</span>
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+
+              {/* Dropdown menu */}
+              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                {isAdmin && (
+                  <Link
+                    href="/admin/dashboard"
+                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    Admin Dashboard
+                  </Link>
+                )}
+                <Link
+                  href="/profile"
+                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Profile
+                </Link>
+                <Link
+                  href="/orders"
+                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Orders
+                </Link>
+                <button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Sign out
+                </button>
+              </div>
+            </div>
           ) : (
             <Link href="/login">
               <motion.div
@@ -230,6 +275,76 @@ export default function HeaderClient({ session }: HeaderClientProps) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Mobile menu - alternative */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+          <div className="px-2 pt-2 pb-3 space-y-1">
+            <Link
+              href="/products"
+              className="block px-3 py-2 text-base font-medium text-gray-900 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+            >
+              Products
+            </Link>
+            <Link
+              href="/categories"
+              className="block px-3 py-2 text-base font-medium text-gray-900 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+            >
+              Categories
+            </Link>
+            <Link
+              href="/about"
+              className="block px-3 py-2 text-base font-medium text-gray-900 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+            >
+              About
+            </Link>
+            <Link
+              href="/contact"
+              className="block px-3 py-2 text-base font-medium text-gray-900 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+            >
+              Contact
+            </Link>
+
+            {user ? (
+              <>
+                {isAdmin && (
+                  <Link
+                    href="/admin/dashboard"
+                    className="block px-3 py-2 text-base font-medium text-gray-900 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                  >
+                    Admin Dashboard
+                  </Link>
+                )}
+                <Link
+                  href="/profile"
+                  className="block px-3 py-2 text-base font-medium text-gray-900 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                >
+                  Profile
+                </Link>
+                <Link
+                  href="/orders"
+                  className="block px-3 py-2 text-base font-medium text-gray-900 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                >
+                  Orders
+                </Link>
+                <button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="w-full text-left px-3 py-2 text-base font-medium text-gray-900 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                >
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                className="block px-3 py-2 text-base font-medium text-primary-600 dark:text-primary-400"
+              >
+                Sign in
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
     </header>
   );
 }

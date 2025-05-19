@@ -1,28 +1,34 @@
+import { Suspense } from "react";
 import LoginForm from "@/components/auth/login-form";
-import { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Login | BlackVault",
-  description: "Log in to your BlackVault account",
-};
+interface LoginPageProps {
+  searchParams?: {
+    registered?: string;
+    error?: string;
+    callbackUrl?: string;
+  };
+}
 
-export default function LoginPage({
-  searchParams,
-}: {
-  searchParams?: { registered?: string };
-}) {
-  const justRegistered = searchParams?.registered === "true";
+export default async function LoginPage({ searchParams = {} }: LoginPageProps) {
+  // Using searchParams with proper await for Next.js 15 compliance
+  const { registered, error, callbackUrl: redirectUrl = "/" } = searchParams;
+  const justRegistered = registered === "true";
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md">
-        {justRegistered && (
-          <div className="mb-6 p-4 bg-green-100 border border-green-200 text-green-800 dark:bg-green-900/30 dark:text-green-200 rounded-md text-sm text-center">
-            Account created successfully! Please sign in with your credentials.
-          </div>
-        )}
-        <LoginForm />
-      </div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <LoginForm
+          justRegistered={justRegistered}
+          error={error}
+          callbackUrl={redirectUrl}
+        />
+      </Suspense>
+
+      {justRegistered && (
+        <div className="absolute top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+          Registration successful! Please log in.
+        </div>
+      )}
     </div>
   );
 }

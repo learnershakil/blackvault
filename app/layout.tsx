@@ -5,7 +5,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import ClientWrapper from "@/components/client-wrapper";
 import Header from "@/components/layout/header-client";
 import Footer from "@/components/layout/footer";
-import { auth } from "@/lib/auth";
+import Providers from "./providers";
+import { auth } from "@/auth";
 
 export const metadata: Metadata = {
   title: "BlackVault E-commerce",
@@ -25,15 +26,17 @@ export default async function RootLayout({
       <body
         className={`${GeistSans.variable} font-sans min-h-screen flex flex-col`}
       >
-        <ThemeProvider>
-          <ClientWrapper>
-            <div className="flex flex-col min-h-screen">
-              <Header session={session} />
-              <main className="flex-grow">{children}</main>
-              <Footer />
-            </div>
-          </ClientWrapper>
-        </ThemeProvider>
+        <Providers>
+          <ThemeProvider>
+            <ClientWrapper>
+              <div className="flex flex-col min-h-screen">
+                <Header session={session} />
+                <main className="flex-grow">{children}</main>
+                <Footer />
+              </div>
+            </ClientWrapper>
+          </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );

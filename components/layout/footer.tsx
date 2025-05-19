@@ -34,8 +34,8 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
-      <div className="container mx-auto px-4 py-12">
+    <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <motion.div
           className="grid grid-cols-1 md:grid-cols-4 gap-8"
           variants={containerVariants}
@@ -45,41 +45,20 @@ export default function Footer() {
         >
           {/* Column 1: Company Info */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              BlackVault
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
+              BlackVault Audio
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Premium audio equipment for the true audiophile. Experience sound
-              like never before.
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              Premium audio equipment for the discerning audiophile.
             </p>
-            <div className="flex space-x-4">
-              {/* Social media icons */}
-              {["facebook", "twitter", "instagram", "youtube"].map((social) => (
-                <motion.a
-                  key={social}
-                  href={`https://${social}.com`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-primary-600 dark:hover:text-primary-500 transition-colors"
-                  whileHover={{ scale: 1.2 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <span className="sr-only">{social}</span>
-                  <div className="w-6 h-6 flex items-center justify-center">
-                    {/* Placeholder for social icons */}
-                    <div className="w-6 h-6 rounded-full bg-current" />
-                  </div>
-                </motion.a>
-              ))}
-            </div>
           </motion.div>
 
           {/* Column 2: Shop Links */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Quick Links
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
+              Shop
             </h3>
-            <ul className="space-y-2">
+            <ul className="mt-4 space-y-2">
               {[
                 { href: "/products", label: "All Products" },
                 { href: "/products/category/headphones", label: "Headphones" },
@@ -97,7 +76,7 @@ export default function Footer() {
                 >
                   <Link
                     href={link.href}
-                    className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-500 transition-colors"
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
                   >
                     {link.label}
                   </Link>
@@ -108,10 +87,10 @@ export default function Footer() {
 
           {/* Column 3: Customer Service */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
               Customer Service
             </h3>
-            <ul className="space-y-2">
+            <ul className="mt-4 space-y-2">
               {[
                 { href: "/contact", label: "Contact Us" },
                 { href: "/faq", label: "FAQs" },
@@ -126,7 +105,7 @@ export default function Footer() {
                 >
                   <Link
                     href={link.href}
-                    className="text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-500 transition-colors"
+                    className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
                   >
                     {link.label}
                   </Link>
@@ -137,7 +116,7 @@ export default function Footer() {
 
           {/* Column 4: Newsletter */}
           <motion.div variants={itemVariants}>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider">
               Stay Updated
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
@@ -177,38 +156,36 @@ export default function Footer() {
 
         {/* Bottom section */}
         <motion.div
-          className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700"
+          className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8 md:flex md:items-center md:justify-between"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
           viewport={{ once: true }}
         >
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              &copy; {new Date().getFullYear()} BlackVault Audio. All rights
-              reserved.
-            </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link
-                href="/terms"
-                className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-500"
-              >
-                Terms of Service
-              </Link>
-              <Link
-                href="/privacy"
-                className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-500"
-              >
-                Privacy Policy
-              </Link>
-              <Link
-                href="/cookies"
-                className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-500"
-              >
-                Cookie Policy
-              </Link>
-            </div>
+          <div className="flex space-x-6 md:order-2">
+            <Link
+              href="/privacy"
+              className="text-xs text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
+            >
+              Privacy
+            </Link>
+            <Link
+              href="/terms"
+              className="text-xs text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
+            >
+              Terms
+            </Link>
+            <Link
+              href="/contact"
+              className="text-xs text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
+            >
+              Contact
+            </Link>
           </div>
+          <p className="mt-8 text-xs text-gray-500 dark:text-gray-400 md:mt-0 md:order-1">
+            &copy; {new Date().getFullYear()} BlackVault Audio. All rights
+            reserved.
+          </p>
         </motion.div>
       </div>
     </footer>

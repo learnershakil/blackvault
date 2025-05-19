@@ -25,3 +25,26 @@ export const truncate = (text: string, length: number) => {
   if (text.length <= length) return text;
   return text.slice(0, length) + "...";
 };
+
+/**
+ * Format date in a human-readable way
+ */
+export const formatDate = (dateString: string, includeTime = false) => {
+  const date = new Date(dateString);
+
+  if (includeTime) {
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};

@@ -30,14 +30,14 @@
 
 ## 👤 User Features
 
-- [ ] **5. User Authentication & Profiles**
+- [x] **5. User Authentication & Profiles**
 
   - Implement user registration and login
   - Create user profile pages
   - Add address management
   - Implement password reset functionality
 
-- [ ] **6. Shopping Cart**
+- [x] **6. Shopping Cart**
   - Implement cart state management with Zustand
   - Create cart UI components
   - Build add/remove/update cart functionality

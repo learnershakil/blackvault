@@ -1,8 +1,11 @@
+import { ReactNode } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
+import CartDrawer from "@/components/cart/cart-drawer";
+import { NextAuthProvider } from "@/providers/next-auth-provider";
 
 // Add fallback fonts in case Google Fonts fail to load
 const geistSans = Geist({
@@ -29,16 +32,19 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100`}
       >
-        <Header />
-        <main className="flex-grow">{children}</main>
-        <Footer />
+        <NextAuthProvider>
+          <Header />
+          <main className="flex-grow">{children}</main>
+          <Footer />
+          <CartDrawer />
+        </NextAuthProvider>
       </body>
     </html>
   );

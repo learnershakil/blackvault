@@ -90,6 +90,7 @@ model Product {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   wishlistItems   WishlistItem[]
+  featuredIn      FeaturedProduct[]
 }
 
 model ProductImage {
@@ -205,7 +206,7 @@ model Order {
   billingAddressId String
   billingAddress Address      @relation("BillingAddress", fields: [billingAddressId], references: [id])
   paymentIntentId String?     // For payment gateway reference
-  paymentMethod String?
+  Payment      Payment[]
   couponCode    String?
   notes         String?       @db.Text
   createdAt     DateTime      @default(now())
@@ -330,4 +331,83 @@ enum DiscountType {
   PERCENTAGE
   FIXED_AMOUNT
   FREE_SHIPPING
+}
+
+// Add Payment model to track payments
+model Payment {
+  id            String       @id @default(cuid())
+  orderId       String
+  order         Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  amount        Decimal      @db.Decimal(10, 2)
+  paymentMethod String
+  status        PaymentStatus @default(PENDING)
+  paymentId     String?      // External payment gateway ID
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+// Banner and promotion models
+model Banner {
+  id          String     @id @default(cuid())
+  title       String
+  subtitle    String?
+  description String?    @db.Text
+  imageUrl    String
+  imageAlt    String?
+  linkUrl     String?
+  linkText    String?
+  position    BannerPosition
+  startDate   DateTime
+  endDate     DateTime
+  isActive    Boolean    @default(true)
+  priority    Int        @default(0)
+  bgColor     String?    // For banner background color
+  textColor   String?    // For banner text color
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+enum BannerPosition {
+  HERO           // Large hero banner at top of page
+  FEATURED       // Mid-page featured banner
+  SIDEBAR        // Sidebar promotion
+  POPUP          // Popup/modal banner
+  NOTIFICATION   // Small notification banner at top
+}
+
+model FeaturedCollection {
+  id          String     @id @default(cuid())
+  title       String
+  description String?    @db.Text
+  slug        String     @unique
+  imageUrl    String?
+  isActive    Boolean    @default(true)
+  priority    Int        @default(0)
+  products    FeaturedProduct[]
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model FeaturedProduct {
+  id                  String             @id @default(cuid())
+  productId           String
+  product             Product            @relation(fields: [productId], references: [id])
+  collectionId        String
+  collection          FeaturedCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  priority            Int                @default(0)
+  specialPrice        Decimal?           @db.Decimal(10, 2)
+  specialPriceEndDate DateTime?
+  createdAt           DateTime           @default(now())
+
+  @@unique([productId, collectionId])
 }

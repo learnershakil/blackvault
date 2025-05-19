@@ -45,13 +45,13 @@
 
 ## 💲 Checkout & Payment
 
-- [ ] **7. Checkout Flow**
+- [x] **7. Checkout Flow**
 
   - Design multi-step checkout process
   - Implement address selection/creation
   - Add order summary and confirmation
 
-- [ ] **8. Payment Integration**
+- [x] **8. Payment Integration**
   - Integrate Razorpay payment gateway
   - Implement payment verification
   - Create order success/failure handling
@@ -59,14 +59,14 @@
 
 ## 🏷️ Discounts & Promotions
 
-- [ ] **9. Coupon Code System**
+- [x] **9. Coupon Code System**
 
   - Create coupon code database schema
   - Implement coupon validation logic
   - Build coupon application UI
   - Create admin coupon management
 
-- [ ] **10. Special Offers & Banners**
+- [x] **10. Special Offers & Banners**
   - Create promotional banner system
   - Implement featured products section
   - Add seasonal sales functionality

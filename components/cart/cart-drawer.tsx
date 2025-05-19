@@ -6,11 +6,20 @@ import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
 import useCartStore from "@/store/cart-store";
 import CartItem from "@/components/cart/cart-item";
+import CouponForm from "@/components/cart/coupon-form";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function CartDrawer() {
-  const { isOpen, closeCart, items, totalItems, totalPrice, isLoading } =
-    useCartStore();
+  const {
+    isOpen,
+    closeCart,
+    items,
+    totalItems,
+    totalPrice,
+    netTotal,
+    isLoading,
+    coupon,
+  } = useCartStore();
 
   // Close cart on escape key
   useEffect(() => {
@@ -132,11 +141,16 @@ export default function CartDrawer() {
               </Button>
             </div>
           ) : (
-            <ul className="space-y-4">
-              {items.map((item) => (
-                <CartItem key={item.id} item={item} />
-              ))}
-            </ul>
+            <>
+              <ul className="space-y-4 mb-4">
+                {items.map((item) => (
+                  <CartItem key={item.id} item={item} />
+                ))}
+              </ul>
+
+              {/* Coupon Form */}
+              <CouponForm />
+            </>
           )}
         </div>
 
@@ -147,13 +161,27 @@ export default function CartDrawer() {
               <span className="text-gray-500 dark:text-gray-400">Subtotal</span>
               <span className="font-medium">{formatPrice(totalPrice())}</span>
             </div>
+
+            {coupon && (
+              <div className="flex justify-between mb-2 text-sm">
+                <span className="text-gray-500 dark:text-gray-400">
+                  Discount
+                </span>
+                <span className="font-medium text-green-600 dark:text-green-400">
+                  -{formatPrice(coupon.discount)}
+                </span>
+              </div>
+            )}
+
             <div className="flex justify-between mb-4 font-semibold">
               <span>Total</span>
-              <span>{formatPrice(totalPrice())}</span>
+              <span>{formatPrice(netTotal())}</span>
             </div>
+
             <Link href="/checkout" onClick={closeCart}>
               <Button className="w-full py-6">Proceed to Checkout</Button>
             </Link>
+
             <button
               onClick={closeCart}
               className="w-full mt-2 text-sm text-primary-600 dark:text-primary-400 text-center hover:underline"

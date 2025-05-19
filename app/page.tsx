@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 
 // Use dynamic imports with loading fallbacks for better performance
-const HeroSection = dynamic(() => import("@/components/home/hero-section"), {
+const HeroBanner = dynamic(() => import("@/components/home/hero-banner"), {
   loading: () => (
     <div className="h-[60vh] bg-gradient-to-r from-primary-900 to-primary-800 animate-pulse"></div>
   ),
@@ -16,8 +16,8 @@ const CategoryShowcase = dynamic(
   }
 );
 
-const FeaturedProducts = dynamic(
-  () => import("@/components/home/featured-products"),
+const FeaturedProductsSection = dynamic(
+  () => import("@/components/home/featured-products-section"),
   {
     loading: () => <div className="h-96 animate-pulse"></div>,
   }
@@ -42,20 +42,51 @@ const NewsletterSection = dynamic(
   }
 );
 
+const NotificationBanner = dynamic(
+  () => import("@/components/home/notification-banner"),
+  {
+    loading: () => <div className="h-12 bg-accent-900 animate-pulse"></div>,
+  }
+);
+
+const SeasonalCollection = dynamic(
+  () => import("@/components/home/seasonal-collection"),
+  {
+    loading: () => (
+      <div className="h-96 bg-gray-50 dark:bg-gray-900 animate-pulse"></div>
+    ),
+  }
+);
+
 export default function Home() {
   return (
     <div className="animate-fade-in">
-      {/* Hero Section with dynamic product slider */}
-      <HeroSection />
+      {/* Notification banner */}
+      <NotificationBanner />
+
+      {/* Hero Banner */}
+      <HeroBanner />
 
       {/* Category Showcase Section */}
       <CategoryShowcase />
 
-      {/* Featured Products Carousel */}
-      <FeaturedProducts />
+      {/* Featured Products Section */}
+      <FeaturedProductsSection
+        title="Best Sellers"
+        viewAllLink="/products/featured"
+      />
 
       {/* Promotional Banner */}
       <PromoBanner />
+
+      {/* Seasonal Collection */}
+      <SeasonalCollection />
+
+      {/* Another Featured Collection */}
+      <FeaturedProductsSection
+        collectionSlug="new-arrivals"
+        viewAllLink="/collections/new-arrivals"
+      />
 
       {/* Customer Testimonials */}
       <Testimonials />

@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { redirect } from "next/navigation";
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
 import AdminSidebar from "@/components/admin/sidebar";
 import AdminHeader from "@/components/admin/header";
 
@@ -19,14 +19,17 @@ export default async function AdminLayout({
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Admin Sidebar */}
+      {/* Admin Sidebar - hidden on mobile */}
       <AdminSidebar />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Admin Header with mobile navigation */}
         <AdminHeader user={session.user} />
+
+        {/* Main content */}
         <main className="flex-1 overflow-y-auto p-4">
-          <div className="container mx-auto">{children}</div>
+          <div className="max-w-7xl mx-auto">{children}</div>
         </main>
       </div>
     </div>

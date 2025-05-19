@@ -1,9 +1,12 @@
+// Still use "server-only" marker for NextAuth config
+import "server-only";
+
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import { AuthConfig } from "next-auth";
-import { compare } from "bcrypt";
 import prisma from "./lib/prisma";
+import { comparePasswords } from "./server";
 
 export default {
   providers: [
@@ -34,7 +37,7 @@ export default {
           return null;
         }
 
-        const passwordMatch = await compare(
+        const passwordMatch = await comparePasswords(
           credentials.password,
           user.password
         );

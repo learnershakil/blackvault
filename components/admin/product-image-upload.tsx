@@ -25,8 +25,9 @@ export default function ProductImageUpload({
   const [error, setError] = useState<string | null>(null);
   const [newImageUrl, setNewImageUrl] = useState("");
   const [newImageAlt, setNewImageAlt] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Add an image by URL (simplified for demo purposes)
+  // Add an image by URL
   const handleAddImage = async () => {
     if (!newImageUrl) {
       setError("Please enter an image URL");
@@ -73,6 +74,67 @@ export default function ProductImageUpload({
     } catch (err: any) {
       console.error("Error adding image:", err);
       setError(err.message || "Failed to add image");
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
+  // Handle file upload for multiple images
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+
+    setError(null);
+    setIsUploading(true);
+
+    // Convert FileList to Array to make it iterable
+    const files = Array.from(e.target.files);
+    const totalFiles = files.length;
+    let completedFiles = 0;
+
+    try {
+      // Upload each file
+      for (const file of files) {
+        // Create FormData for file upload
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("alt", file.name || "Product image");
+
+        // Update progress based on files completed
+        completedFiles++;
+        setUploadProgress(Math.round((completedFiles / totalFiles) * 100));
+
+        const response = await fetch(
+          `/api/products/${productId}/images/upload`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          try {
+            const errorData = JSON.parse(errorText);
+            throw new Error(errorData.error || `Failed to upload ${file.name}`);
+          } catch (parseError) {
+            throw new Error(`Server error uploading ${file.name}`);
+          }
+        }
+
+        const newImage = await response.json();
+
+        // Add the new image to the list
+        setImages((prev) => [...prev, newImage]);
+      }
+
+      // Clear the file input after successful upload
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    } catch (err: any) {
+      console.error("Error uploading images:", err);
+      setError(err.message || "Failed to upload images");
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
@@ -133,6 +195,89 @@ export default function ProductImageUpload({
           {error}
         </div>
       )}
+
+      {/* File Upload Section */}
+      <div className="border border-gray-300 dark:border-gray-700 rounded-lg p-4">
+        <h3 className="font-medium mb-4">Upload Images</h3>
+
+        <div className="flex flex-col space-y-4 mb-4">
+          <div>
+            <label
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              htmlFor="file-upload"
+            >
+              Upload multiple images
+            </label>
+            <input
+              ref={fileInputRef}
+              id="file-upload"
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleFileUpload}
+              className="block w-full text-sm text-gray-900 dark:text-white
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-md file:border-0
+                file:text-sm file:font-semibold
+                file:bg-primary-50 file:text-primary-600
+                dark:file:bg-primary-900/20 dark:file:text-primary-400
+                hover:file:bg-primary-100 dark:hover:file:bg-primary-900/30
+                bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg p-2"
+              disabled={isUploading}
+            />
+            {isUploading && (
+              <div className="mt-2">
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                  <div
+                    className="bg-primary-600 h-2.5 rounded-full"
+                    style={{ width: `${uploadProgress}%` }}
+                  ></div>
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Uploading... {uploadProgress}%
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex flex-col space-y-2">
+          <p className="text-sm text-gray-700 dark:text-gray-300 font-medium">
+            Or add an image URL
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+            <div className="md:col-span-2">
+              <input
+                type="url"
+                value={newImageUrl}
+                onChange={(e) => setNewImageUrl(e.target.value)}
+                placeholder="Image URL"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
+                disabled={isUploading}
+              />
+            </div>
+            <div className="md:col-span-1">
+              <Button
+                onClick={handleAddImage}
+                disabled={!newImageUrl || isUploading}
+                className="w-full"
+              >
+                Add URL
+              </Button>
+            </div>
+          </div>
+          <div>
+            <input
+              type="text"
+              value={newImageAlt}
+              onChange={(e) => setNewImageAlt(e.target.value)}
+              placeholder="Image description (alt text)"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm mt-2"
+              disabled={isUploading}
+            />
+          </div>
+        </div>
+      </div>
 
       {/* Image list */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">

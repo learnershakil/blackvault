@@ -24,6 +24,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
+        suppressHydrationWarning
         className={`${GeistSans.variable} font-sans min-h-screen flex flex-col`}
       >
         <Providers>

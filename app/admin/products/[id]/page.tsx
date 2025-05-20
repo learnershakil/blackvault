@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
-import ProductForm from "@/components/admin/product-form";
+import ProductFormFixed from "@/components/admin/product-form-fixed";
 import ProductImageUpload from "@/components/admin/product-image-upload";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -12,10 +12,13 @@ export const metadata = {
 
 export default async function EditProduct({
   params,
+  searchParams,
 }: {
   params: { id: string };
+  searchParams?: { created?: string };
 }) {
   const { id } = params;
+  const justCreated = searchParams?.created === "true";
 
   // Fetch the product
   const product = await prisma.product.findUnique({
@@ -46,6 +49,17 @@ export default async function EditProduct({
 
   return (
     <div>
+      {justCreated && (
+        <div className="bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-lg p-4 mb-6">
+          <h3 className="text-green-800 dark:text-green-300 font-medium mb-1">
+            Product Created Successfully!
+          </h3>
+          <p className="text-green-600 dark:text-green-400 text-sm">
+            Your product has been created. You can now add product images below.
+          </p>
+        </div>
+      )}
+
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold">{product.name}</h1>
@@ -80,7 +94,7 @@ export default async function EditProduct({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main content - product form */}
         <div className="lg:col-span-2">
-          <ProductForm
+          <ProductFormFixed
             categories={categories}
             initialData={product}
             isEditing={true}

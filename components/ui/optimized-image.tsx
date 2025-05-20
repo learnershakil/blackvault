@@ -36,6 +36,10 @@ export default function OptimizedImage({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
+  // Check if the image URL is external and handle it properly
+  const isExternalImage =
+    src && (src.startsWith("http://") || src.startsWith("https://"));
+
   // Handle placeholder shimmer effect
   const shimmer = (w: number, h: number) => `
     <svg width="${w}" height="${h}" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -90,7 +94,31 @@ export default function OptimizedImage({
             />
           </svg>
         </div>
+      ) : isExternalImage ? (
+        // For external images, use unoptimized option to avoid hostname config issues
+        <Image
+          src={src}
+          alt={alt}
+          width={fill ? undefined : width}
+          height={fill ? undefined : height}
+          fill={fill}
+          quality={quality}
+          priority={priority}
+          sizes={sizes}
+          unoptimized={true}
+          placeholder={`data:image/svg+xml;base64,${toBase64(
+            shimmer(width, height)
+          )}`}
+          onLoadingComplete={handleLoadingComplete}
+          onError={handleError}
+          className={cn(
+            "transition-opacity duration-300 ease-in-out",
+            isLoading ? "opacity-0" : "opacity-100",
+            imgClassName
+          )}
+        ></Image>
       ) : (
+        // For internal images, use normal optimization
         <Image
           src={src}
           alt={alt}

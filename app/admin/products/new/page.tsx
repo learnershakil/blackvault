@@ -1,5 +1,5 @@
 import prisma from "@/lib/prisma";
-import ProductForm from "@/components/admin/product-form";
+import ProductFormFixed from "@/components/admin/product-form-fixed";
 
 export const metadata = {
   title: "Add New Product | BlackVault Admin",
@@ -27,7 +27,17 @@ export default async function AddNewProduct() {
         </p>
       </div>
 
-      <ProductForm categories={categories} />
+      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-lg p-4 mb-6">
+        <h3 className="text-blue-800 dark:text-blue-300 font-medium text-sm mb-1">
+          Image Upload
+        </h3>
+        <p className="text-blue-600 dark:text-blue-400 text-sm">
+          Once you create your product, you'll be able to add product images on
+          the edit page.
+        </p>
+      </div>
+
+      <ProductFormFixed categories={categories} />
     </div>
   );
 }

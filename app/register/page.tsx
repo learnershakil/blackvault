@@ -2,13 +2,20 @@ import RegisterForm from "@/components/auth/register-form";
 import Link from "next/link";
 import { Metadata } from "next";
 import { Suspense } from "react";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Register | BlackVault",
   description: "Create a new account on BlackVault",
 };
 
-export default function RegisterPage() {
+export default async function RegisterPage() {
+  // Check if user is already authenticated
+  const session = await auth();
+  if (session) {
+    redirect("/profile");
+  }
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">
       <Suspense fallback={<div>Loading...</div>}>

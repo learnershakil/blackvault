@@ -1,16 +1,24 @@
 import ResetPasswordForm from "@/components/auth/reset-password-form";
 import { Metadata } from "next";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Reset Password | BlackVault",
   description: "Create a new password for your BlackVault account",
 };
 
-export default function ResetPasswordPage({
+export default async function ResetPasswordPage({
   searchParams,
 }: {
   searchParams: { token?: string };
 }) {
+  // Check if user is already authenticated
+  const session = await auth();
+  if (session) {
+    redirect("/profile");
+  }
+
   const token = searchParams.token || "";
 
   if (!token) {

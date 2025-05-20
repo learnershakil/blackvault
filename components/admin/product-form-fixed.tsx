@@ -9,22 +9,6 @@ type Category = {
   name: string;
   slug: string;
 };
-      } else {
-        // For new products, redirect to the edit page (which includes image upload)
-        router.push(`/admin/products/${data.id}`);
-      }
-    } catch (err: any) {
-      console.error("Error saving product:", err);
-      setError(err.message || "Failed to save product");
-    } finally {
-      setIsLoading(false);
-    }i/button";
-
-type Category = {
-  id: string;
-  name: string;
-  slug: string;
-};
 
 type ProductFormProps = {
   categories: Category[];
@@ -43,7 +27,7 @@ type ProductFormProps = {
   isEditing?: boolean;
 };
 
-export default function ProductForm({
+export default function ProductFormFixed({
   categories,
   initialData,
   isEditing = false,
@@ -123,14 +107,14 @@ export default function ProductForm({
             "Content-Type": "application/json",
           },
           body: JSON.stringify(formData),
-          cache: 'no-store', // Prevent caching issues
+          cache: "no-store", // Prevent caching issues
         });
       }
 
       // Check if response is OK before parsing JSON
       if (!response.ok) {
         const contentType = response.headers.get("content-type");
-        
+
         if (contentType && contentType.includes("application/json")) {
           // Parse JSON error
           const errorData = await response.json();
@@ -141,81 +125,91 @@ export default function ProductForm({
           throw new Error(`Server error: ${errorText.substring(0, 200)}`);
         }
       }
-      
+
       // Response is OK, parse JSON
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to save product");
-      }
 
       // Redirect to product edit page or back to products list
       if (isEditing) {
         router.refresh();
       } else {
-        router.push(`/admin/products/${data.id}`);
+        // Redirect to edit page with created=true parameter to show a notification
+        router.push(`/admin/products/${data.id}?created=true`);
       }
     } catch (err: any) {
       console.error("Error saving product:", err);
-      setError(err.message || "An error occurred while saving the product");
+      setError(err.message || "Failed to save product");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-8">
       {error && (
         <div className="p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 rounded-md">
-          <p>{error}</p>
+          {error}
         </div>
       )}
 
-      {/* Basic product details section */}
+      {/* Basic information */}
       <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="p-6">
           <h3 className="text-lg font-medium border-b border-gray-200 dark:border-gray-700 pb-3 mb-6">
-            Product Information
+            Basic Information
           </h3>
 
-          <div className="grid grid-cols-1 gap-6">
-            {/* Product name */}
+          <div className="space-y-4">
+            {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Product Name <span className="text-red-500">*</span>
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >
+                Product Name *
               </label>
               <input
                 type="text"
+                id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-600 dark:bg-gray-700 dark:text-white"
-                placeholder="Enter product name"
+                placeholder="Product name"
               />
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Description <span className="text-red-500">*</span>
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >
+                Description *
               </label>
               <textarea
+                id="description"
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-600 dark:bg-gray-700 dark:text-white min-h-[120px]"
-                placeholder="Enter product description"
-              ></textarea>
+                rows={6}
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-600 dark:bg-gray-700 dark:text-white"
+                placeholder="Product description"
+              />
             </div>
 
             {/* Category */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Category <span className="text-red-500">*</span>
+              <label
+                htmlFor="categoryId"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >
+                Category *
               </label>
               <select
+                id="categoryId"
                 name="categoryId"
                 value={formData.categoryId}
                 onChange={handleChange}
@@ -234,89 +228,116 @@ export default function ProductForm({
         </div>
       </div>
 
-      {/* Pricing and inventory section */}
+      {/* Pricing */}
       <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="p-6">
           <h3 className="text-lg font-medium border-b border-gray-200 dark:border-gray-700 pb-3 mb-6">
-            Pricing & Inventory
+            Pricing
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Price */}
+            {/* Regular price */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Price <span className="text-red-500">*</span>
+              <label
+                htmlFor="price"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >
+                Regular Price *
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                   <span className="text-gray-500 dark:text-gray-400">$</span>
                 </div>
                 <input
                   type="number"
+                  id="price"
                   name="price"
-                  value={formData.price || ""}
-                  onChange={handleChange}
                   min="0"
                   step="0.01"
+                  value={formData.price}
+                  onChange={handleChange}
                   required
-                  className="w-full pl-8 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-600 dark:bg-gray-700 dark:text-white"
+                  className="w-full pl-8 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-600 dark:bg-gray-700 dark:text-white"
                   placeholder="0.00"
                 />
               </div>
             </div>
 
-            {/* Compare at price */}
+            {/* Compare-at price */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Compare at Price
+              <label
+                htmlFor="compareAtPrice"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >
+                Compare-at Price (Optional)
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                   <span className="text-gray-500 dark:text-gray-400">$</span>
                 </div>
                 <input
                   type="number"
+                  id="compareAtPrice"
                   name="compareAtPrice"
-                  value={formData.compareAtPrice || ""}
-                  onChange={handleChange}
                   min="0"
                   step="0.01"
-                  className="w-full pl-8 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-600 dark:bg-gray-700 dark:text-white"
+                  value={formData.compareAtPrice}
+                  onChange={handleChange}
+                  className="w-full pl-8 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-600 dark:bg-gray-700 dark:text-white"
                   placeholder="0.00"
                 />
               </div>
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                The original price if this product is on sale
+                Original price, displayed as a crossed-out price
               </p>
             </div>
+          </div>
+        </div>
+      </div>
 
+      {/* Inventory */}
+      <div className="bg-white dark:bg-gray-800 shadow-sm rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="p-6">
+          <h3 className="text-lg font-medium border-b border-gray-200 dark:border-gray-700 pb-3 mb-6">
+            Inventory
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* SKU */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                SKU <span className="text-red-500">*</span>
+              <label
+                htmlFor="sku"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >
+                SKU (Stock Keeping Unit) *
               </label>
               <input
                 type="text"
+                id="sku"
                 name="sku"
                 value={formData.sku}
                 onChange={handleChange}
                 required
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-600 dark:bg-gray-700 dark:text-white"
-                placeholder="Enter product SKU"
+                placeholder="SKU123"
               />
             </div>
 
-            {/* Stock */}
+            {/* Inventory quantity */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Stock <span className="text-red-500">*</span>
+              <label
+                htmlFor="stock"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >
+                Quantity *
               </label>
               <input
                 type="number"
+                id="stock"
                 name="stock"
-                value={formData.stock || ""}
-                onChange={handleChange}
                 min="0"
+                value={formData.stock}
+                onChange={handleChange}
                 required
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-600 dark:bg-gray-700 dark:text-white"
                 placeholder="0"
@@ -373,22 +394,45 @@ export default function ProductForm({
         </div>
       </div>
 
-      {/* Form buttons */}
-      <div className="flex justify-end space-x-4">
+      <div className="flex justify-end">
         <Button
           type="button"
           variant="outline"
-          onClick={() => router.push("/admin/products")}
-          disabled={isLoading}
+          onClick={() => router.back()}
+          className="mr-2"
         >
           Cancel
         </Button>
         <Button type="submit" disabled={isLoading}>
-          {isLoading
-            ? "Saving..."
-            : isEditing
-            ? "Update Product"
-            : "Create Product"}
+          {isLoading ? (
+            <>
+              <svg
+                className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Saving...
+            </>
+          ) : isEditing ? (
+            "Update Product"
+          ) : (
+            "Create Product"
+          )}
         </Button>
       </div>
     </form>

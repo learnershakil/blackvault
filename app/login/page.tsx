@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import LoginForm from "@/components/auth/login-form";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 interface LoginPageProps {
   searchParams?: {
@@ -10,8 +12,16 @@ interface LoginPageProps {
 }
 
 export default async function LoginPage({ searchParams = {} }: LoginPageProps) {
-  // Using searchParams with proper await for Next.js 15 compliance
-  const { registered, error, callbackUrl: redirectUrl = "/" } = searchParams;
+  // Check if user is already authenticated
+  const session = await auth();
+  if (session) {
+    redirect("/profile");
+  }
+
+  // Properly handle searchParams as per Next.js recommendations
+  const registered = searchParams?.registered;
+  const error = searchParams?.error;
+  const redirectUrl = searchParams?.callbackUrl || "/";
   const justRegistered = registered === "true";
 
   return (

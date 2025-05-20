@@ -392,6 +392,8 @@ model FeaturedCollection {
   imageUrl    String?
   isActive    Boolean    @default(true)
   priority    Int        @default(0)
+  startDate   DateTime?  // Optional start date
+  endDate     DateTime?  // Optional end date
   products    FeaturedProduct[]
  
   createdAt   DateTime   @default(now())

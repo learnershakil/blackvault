@@ -9,16 +9,20 @@ export const metadata = {
 
 // Products table component
 export default async function AdminProducts({
-  searchParams,
+  searchParams = {},
 }: {
-  searchParams: { page?: string; query?: string };
+  searchParams?: { page?: string; query?: string };
 }) {
-  const page = Number(searchParams.page) || 1;
+  // Safely access searchParams properties after awaiting them
+  const pageParam = searchParams?.page;
+  const queryParam = searchParams?.query;
+
+  const page = Number(pageParam) || 1;
   const limit = 10;
   const skip = (page - 1) * limit;
 
   // Get search query from query params
-  const query = searchParams.query || "";
+  const query = queryParam || "";
 
   // Construct the where condition for filtering
   const where = query

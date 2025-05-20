@@ -93,10 +93,14 @@ export default function Footer() {
             <ul className="mt-4 space-y-2">
               {[
                 { href: "/contact", label: "Contact Us" },
-                { href: "/faq", label: "FAQs" },
-                { href: "/returns", label: "Returns & Exchanges" },
-                { href: "/shipping", label: "Shipping Policy" },
-                { href: "/warranty", label: "Warranty Information" },
+                { href: "/faqs", label: "FAQs" },
+                { href: "/returns-exchanges", label: "Returns & Exchanges" },
+                { href: "/shipping-policy", label: "Shipping Policy" },
+                {
+                  href: "/warranty-information",
+                  label: "Warranty Information",
+                },
+                { href: "/about", label: "About Us" },
               ].map((link) => (
                 <motion.li
                   key={link.href}

@@ -16,6 +16,17 @@ const nextConfig: NextConfig = {
       "images.unsplash.com",
       "via.placeholder.com",
       "localhost",
+      "i.ytimg.com",
+    ],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+      {
+        protocol: "http",
+        hostname: "**",
+      },
     ],
   },
 

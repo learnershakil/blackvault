@@ -48,14 +48,24 @@ export default function FeaturedProductsSection({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+    let isMounted = true;
+
     const fetchFeaturedCollection = async () => {
       try {
         setIsLoading(true);
 
-        // Fetch collections from the API
+        // Fetch collections from the API with timeout
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+
         const response = await fetch(
-          `/api/admin/featured-collections?active=true`
+          `/api/admin/featured-collections?active=true`,
+          { signal: controller.signal }
         );
+
+        clearTimeout(timeoutId);
+
+        if (!isMounted) return;
 
         if (!response.ok) {
           throw new Error("Failed to fetch featured collections");
@@ -73,20 +83,35 @@ export default function FeaturedProductsSection({
           targetCollection = collections[0];
         }
 
-        if (targetCollection) {
+        if (targetCollection && isMounted) {
           setCollection(targetCollection);
-        } else {
+        } else if (isMounted) {
           setError("No featured collection found");
         }
       } catch (err: any) {
-        console.error("Error fetching featured collection:", err);
-        setError(err.message || "Failed to load featured products");
+        if (err.name === "AbortError") {
+          console.log("Featured collection fetch aborted due to timeout");
+        } else {
+          console.error("Error fetching featured collection:", err);
+        }
+
+        if (isMounted) {
+          setError(err.message || "Failed to load featured products");
+        }
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchFeaturedCollection();
+
+    // Clean up function
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
   }, [collectionSlug]);
 
   if (isLoading) {

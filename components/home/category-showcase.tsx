@@ -12,7 +12,7 @@ const categories = [
     color: "bg-blue-50 dark:bg-blue-900/20",
     textColor: "text-blue-800 dark:text-blue-200",
     borderColor: "border-blue-200 dark:border-blue-800",
-    href: "/products/headphones",
+    href: "/products/category/headphones",
   },
   {
     name: "Wireless Earbuds",
@@ -21,7 +21,7 @@ const categories = [
     color: "bg-purple-50 dark:bg-purple-900/20",
     textColor: "text-purple-800 dark:text-purple-200",
     borderColor: "border-purple-200 dark:border-purple-800",
-    href: "/products/wireless-earbuds",
+    href: "/products/category/wireless-earbuds",
   },
   {
     name: "Speakers",
@@ -30,7 +30,7 @@ const categories = [
     color: "bg-amber-50 dark:bg-amber-900/20",
     textColor: "text-amber-800 dark:text-amber-200",
     borderColor: "border-amber-200 dark:border-amber-800",
-    href: "/products/speakers",
+    href: "/products/category/speakers",
   },
   {
     name: "Accessories",
@@ -39,7 +39,7 @@ const categories = [
     color: "bg-emerald-50 dark:bg-emerald-900/20",
     textColor: "text-emerald-800 dark:text-emerald-200",
     borderColor: "border-emerald-200 dark:border-emerald-800",
-    href: "/products/accessories",
+    href: "/products/category/accessories",
   },
 ];
 

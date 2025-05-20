@@ -135,10 +135,28 @@ export default function HeaderClient({ session }: HeaderClientProps) {
               </button>
 
               {/* Dropdown menu */}
-              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+              <div
+                className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-10 transition-opacity"
+                style={{
+                  display: mobileMenuOpen ? "block" : "none",
+                  opacity: mobileMenuOpen ? 1 : 0,
+                  transitionDelay: mobileMenuOpen ? "0ms" : "300ms",
+                }}
+                onMouseEnter={() => {
+                  // Keep menu open when mouse enters dropdown
+                  setMobileMenuOpen(true);
+                }}
+                onMouseLeave={() => {
+                  // Hide menu when mouse leaves
+                  const timeout = setTimeout(() => {
+                    setMobileMenuOpen(false);
+                  }, 300);
+                  return () => clearTimeout(timeout);
+                }}
+              >
                 {isAdmin && (
                   <Link
-                    href="/admin/dashboard"
+                    href="/admin"
                     className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                   >
                     Admin Dashboard
@@ -309,7 +327,7 @@ export default function HeaderClient({ session }: HeaderClientProps) {
               <>
                 {isAdmin && (
                   <Link
-                    href="/admin/dashboard"
+                    href="/admin"
                     className="block px-3 py-2 text-base font-medium text-gray-900 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
                   >
                     Admin Dashboard

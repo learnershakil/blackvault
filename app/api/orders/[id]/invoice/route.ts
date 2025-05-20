@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
+import      subtotal: Number(order.subTotal),
+      tax: Number(order.tax),
+      shipping: Number(order.shipping),
+      discount: Number(order.discount),
+      total: Number(order.total),
+      paymentMethod: order.Payment?.[0]?.paymentMethod || "Online Payment",
+      paymentId: order.Payment?.[0]?.paymentId || undefined, } from "@/auth";
 import prisma from "@/lib/prisma";
 import {
   generateInvoiceHtml,
@@ -29,9 +35,9 @@ export async function GET(
         user: {
           select: { email: true, name: true },
         },
-        // Fetch payment data if available
         Payment: {
-          select: { paymentId: true, status: true },
+          select: { paymentId: true, status: true, paymentMethod: true },
+          orderBy: { createdAt: "desc" },
           take: 1,
         },
       },
@@ -66,8 +72,8 @@ export async function GET(
       shipping: Number(order.shipping),
       discount: Number(order.discount),
       total: Number(order.total),
-      paymentMethod: order.paymentMethod || "Online Payment",
-      paymentId: order.Payment[0]?.paymentId,
+      paymentMethod: order.Payment?.[0]?.paymentMethod || "Online Payment",
+      paymentId: order.Payment?.[0]?.paymentId,
     };
 
     // Generate invoice HTML

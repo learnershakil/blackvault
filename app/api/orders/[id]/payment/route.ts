@@ -40,11 +40,10 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    // Update order payment method and status
+    // Update order status based on payment method
     const updatedOrder = await prisma.order.update({
       where: { id },
       data: {
-        paymentMethod,
         // Only update order status for specific payment methods/scenarios
         ...(paymentMethod === "cod" ? { status: "PENDING" } : {}),
         ...(paymentMethod === "razorpay" && status === "COMPLETED"

@@ -1,6 +1,9 @@
+"use client";
 // Client-safe authentication utilities
 import { useSession } from "next-auth/react";
 import type { Session } from "next-auth";
+// Import client-safe auth utilities
+import { signIn, signOut, getUserRole as getRole } from "@/auth.client";
 
 // Custom hook to access session data in client components
 export const useAuth = () => {
@@ -19,12 +22,8 @@ export const useAuth = () => {
 
 // Get the user's role as a string
 export const getUserRole = (session: Session | null) => {
-  return session?.user?.role || "GUEST";
+  return getRole(session);
 };
 
-// Import auth utilities from the main auth.ts file
-// We've moved the NextAuth configuration to the root auth.ts file
-import { auth, signIn, signOut } from "@/auth";
-
-// Re-export for convenience
-export { auth, signIn, signOut };
+// Re-export client-safe utilities
+export { signIn, signOut };

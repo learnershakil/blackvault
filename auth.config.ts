@@ -1,5 +1,5 @@
-// Still use "server-only" marker for NextAuth config
-import "server-only";
+// Removed "server-only" import as this file may be imported in client components
+// Server-only functionality is now isolated in server-auth.ts
 
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";

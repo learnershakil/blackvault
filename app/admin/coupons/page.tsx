@@ -4,10 +4,9 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { formatCouponDiscount, getCouponStatus } from "@/lib/coupon-utils";
+import Head from "next/head";
 
-export const metadata = {
-  title: "Manage Coupons | BlackVault Admin",
-};
+// Client components can't export metadata, using next/head instead
 
 export default function AdminCouponsPage() {
   const [coupons, setCoupons] = useState<any[]>([]);
@@ -89,6 +88,9 @@ export default function AdminCouponsPage() {
 
   return (
     <div>
+      <Head>
+        <title>Manage Coupons | BlackVault Admin</title>
+      </Head>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Coupon Codes</h1>
         <Link href="/admin/coupons/new">

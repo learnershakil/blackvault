@@ -141,17 +141,25 @@ export async function POST(request: NextRequest) {
         discount,
         shippingAddressId: shippingAddress.id,
         billingAddressId: billingAddress.id,
-        paymentMethod: validatedData.paymentMethod,
         couponCode: validatedData.couponCode,
         notes: validatedData.notes,
         items: {
           create: orderItems,
+        },
+        // Create a payment record associated with this order
+        Payment: {
+          create: {
+            amount: total,
+            paymentMethod: validatedData.paymentMethod,
+            status: "PENDING",
+          },
         },
       },
       include: {
         items: true,
         shippingAddress: true,
         billingAddress: true,
+        Payment: true,
       },
     });
 

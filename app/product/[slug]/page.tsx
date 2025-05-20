@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
-import ProductDetail from "@/components/product/product-detail";
+import ProductDetail from "@/components/product/product-details";
 import { Metadata } from "next";
 import { ProductStructuredData } from "@/components/seo/structured-data";
 

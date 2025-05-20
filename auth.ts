@@ -1,4 +1,5 @@
 // Root auth.ts file for server-side authentication
+import "server-only"; // Explicitly mark this file as server-only
 import NextAuth from "next-auth";
 import authConfig from "./auth.config";
 import { PrismaAdapter } from "@auth/prisma-adapter";
